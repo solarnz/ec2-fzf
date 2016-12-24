@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -16,6 +17,20 @@ import (
 type Ec2fzf struct {
 	ec2      *ec2.EC2
 	fzfInput *bytes.Buffer
+}
+
+type Tags []*ec2.Tag
+
+func (s Tags) Len() int {
+	return len(s)
+}
+
+func (s Tags) Less(i, j int) bool {
+	return *(s[i].Key) < *(s[j].Key)
+}
+
+func (s Tags) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
 }
 
 var region string
@@ -113,11 +128,15 @@ func (e *Ec2fzf) GetConnectionDetails(instanceId string) (string, error) {
 }
 
 func StringFromInstance(i *ec2.Instance) string {
-	tags := make([]string, 0, 0)
-	for _, t := range i.Tags {
-		tags = append(tags, fmt.Sprintf("%s=%s", *t.Key, *t.Value))
+	sortedTags := make(Tags, len(i.Tags))
+	copy(sortedTags, i.Tags)
+	sort.Sort(sortedTags)
+
+	tagStrings := make([]string, 0, 0)
+	for _, t := range sortedTags {
+		tagStrings = append(tagStrings, fmt.Sprintf("%s=%s", *t.Key, *t.Value))
 	}
-	return fmt.Sprintf("%s: Tags=(%s)", *i.InstanceId, strings.Join(tags, " "))
+	return fmt.Sprintf("%s: Tags=(%s)", *i.InstanceId, strings.Join(tagStrings, " "))
 }
 
 func InstanceIdFromString(s string) (string, error) {
