@@ -4,6 +4,7 @@ ec2-fzf is a tool that utilised the [fzf](https://github.com/junegunn/fzf)
 fuzzy matcher in order to retrieve the public or private address of an ec2
 instance.
 
+![GIF](https://raw.githubusercontent.com/solarnz/ec2-fzf/master/img/ec2-fzf.gif)
 
 ## Installation
 
