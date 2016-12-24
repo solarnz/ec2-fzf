@@ -193,8 +193,8 @@
 		},
 		{
 			"ImportPath": "github.com/solarnz/fzf/src",
-			"Comment": "0.15.9-12-gdcf295b",
-			"Rev": "dcf295b9a448e94404b00cb0c3edc1ac1fa865e4"
+			"Comment": "0.15.9-14-gba1433b",
+			"Rev": "ba1433bf3826ae5602bbc87f9c8ea692a107cef9"
 		},
 		{
 			"ImportPath": "golang.org/x/sys/unix",
@@ -235,6 +235,16 @@
 		{
 			"ImportPath": "golang.org/x/text/transform",
 			"Rev": "a49bea13b776691cb1b49873e5d8df96ec74831a"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/vendor/github.com/go-ini/ini",
+			"Comment": "v1.6.8-2-g9a0c8a5",
+			"Rev": "9a0c8a57d9bb717d481bc91f995df80d9bb9238c"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/vendor/github.com/jmespath/go-jmespath",
+			"Comment": "v1.6.8-2-g9a0c8a5",
+			"Rev": "9a0c8a57d9bb717d481bc91f995df80d9bb9238c"
 		}
 	]
 }

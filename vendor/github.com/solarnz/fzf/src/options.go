@@ -177,7 +177,7 @@ type Options struct {
 	Input       io.Reader
 }
 
-func defaultOptions() *Options {
+func DefaultOptions() *Options {
 	return &Options{
 		Fuzzy:       true,
 		FuzzyAlgo:   algo.FuzzyMatchV2,
@@ -1092,7 +1092,7 @@ func parseOptions(opts *Options, allArgs []string) {
 	}
 }
 
-func postProcessOptions(opts *Options) {
+func PostProcessOptions(opts *Options) {
 	// Default actions for CTRL-N / CTRL-P when --history is set
 	if opts.History != nil {
 		if _, prs := opts.Keymap[tui.CtrlP]; !prs {
@@ -1127,7 +1127,7 @@ func postProcessOptions(opts *Options) {
 
 // ParseOptions parses command-line options
 func ParseOptions() *Options {
-	opts := defaultOptions()
+	opts := DefaultOptions()
 
 	// Options from Env var
 	words, _ := shellwords.Parse(os.Getenv("FZF_DEFAULT_OPTS"))
@@ -1138,6 +1138,6 @@ func ParseOptions() *Options {
 	// Options from command-line arguments
 	parseOptions(opts, os.Args[1:])
 
-	postProcessOptions(opts)
+	PostProcessOptions(opts)
 	return opts
 }

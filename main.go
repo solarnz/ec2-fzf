@@ -67,7 +67,8 @@ func main() {
 		ec2fzf.fzfInput.WriteString("\n")
 	}
 
-	options := fzf.ParseOptions()
+	options := fzf.DefaultOptions()
+	fzf.PostProcessOptions(options)
 	options.Header = []string{
 		"AWS EC2 Instances",
 	}
