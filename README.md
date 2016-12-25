@@ -9,7 +9,7 @@ instance.
 ## Installation
 
 ```
-go install github.com/solarnz/ec2-fzf
+go get github.com/solarnz/ec2-fzf/cmd/ec2-fzf
 ```
 
 ## Usage
