@@ -22,3 +22,11 @@ You can also set `-region` and pass the ec2 region you would like to list
 instances in.
 
 You can use `ec2-fzf` with ssh with `ssh $(ec2-fzf -region ap-southeast-2)`
+
+## Configuration
+
+You can set the default configuration options in `~/.config/ec2-fzf`, example
+```
+Region = "us-east-1"
+Template = "{{index .Tags \"Name\"}}"
+```

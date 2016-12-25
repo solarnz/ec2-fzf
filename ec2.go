@@ -1,8 +1,8 @@
 package ec2fzf
 
 import (
+	"bytes"
 	"fmt"
-	"sort"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -47,16 +47,27 @@ func (e *Ec2fzf) GetConnectionDetails(instanceId string) (string, error) {
 	return *resp.Reservations[0].Instances[0].PublicDnsName, nil
 }
 
-func StringFromInstance(i *ec2.Instance) string {
-	sortedTags := make(Tags, len(i.Tags))
-	copy(sortedTags, i.Tags)
-	sort.Sort(sortedTags)
+func (e *Ec2fzf) StringFromInstance(i *ec2.Instance) (string, error) {
+	tags := make(map[string]string)
 
-	tagStrings := make([]string, 0, 0)
-	for _, t := range sortedTags {
-		tagStrings = append(tagStrings, fmt.Sprintf("%s=%s", *t.Key, *t.Value))
+	for _, t := range i.Tags {
+		tags[*t.Key] = *t.Value
 	}
-	return fmt.Sprintf("%s: Tags=(%s)", *i.InstanceId, strings.Join(tagStrings, " "))
+
+	buffer := new(bytes.Buffer)
+	err := e.template.Execute(
+		buffer,
+		struct {
+			Tags map[string]string
+		}{
+			Tags: tags,
+		},
+	)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s: %s", *i.InstanceId, buffer.String()), nil
 }
 
 func InstanceIdFromString(s string) (string, error) {

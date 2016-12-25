@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"text/template"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -15,10 +16,14 @@ type Ec2fzf struct {
 	ec2      *ec2.EC2
 	fzfInput *bytes.Buffer
 	options  Options
+	template *template.Template
 }
 
 func New() (*Ec2fzf, error) {
-	options := ParseOptions()
+	options, err := ParseOptions()
+	if err != nil {
+		return nil, err
+	}
 
 	sess, err := session.NewSessionWithOptions(session.Options{
 		Config: aws.Config{
@@ -29,10 +34,13 @@ func New() (*Ec2fzf, error) {
 		return nil, err
 	}
 
+	tmpl, err := template.New("Instance").Parse(options.Template)
+
 	return &Ec2fzf{
 		ec2:      ec2.New(sess),
 		fzfInput: new(bytes.Buffer),
 		options:  options,
+		template: tmpl,
 	}, nil
 }
 
@@ -44,7 +52,12 @@ func (e *Ec2fzf) Run() {
 	}
 
 	for _, i := range instances {
-		e.fzfInput.WriteString(StringFromInstance(i))
+		str, err := e.StringFromInstance(i)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		e.fzfInput.WriteString(str)
 		e.fzfInput.WriteString("\n")
 	}
 
