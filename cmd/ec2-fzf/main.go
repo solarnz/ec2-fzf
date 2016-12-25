@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"flag"
 	"fmt"
 	"os"
 	"sort"
@@ -11,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/solarnz/ec2-fzf"
 	"github.com/solarnz/fzf/src"
 )
 
@@ -37,13 +37,12 @@ var region string
 var usePrivateIp bool
 
 func main() {
-	flag.StringVar(&region, "region", "us-east-1", "The AWS region")
-	flag.BoolVar(&usePrivateIp, "private", false, "return the private IP address of the instance rather than the public dns")
-	flag.Parse()
+	options := ec2fzf.ParseOptions()
+	usePrivateIp = options.UsePrivateIp
 
 	sess, err := session.NewSessionWithOptions(session.Options{
 		Config: aws.Config{
-			Region: aws.String(region),
+			Region: aws.String(options.Region),
 		},
 	})
 	if err != nil {
@@ -67,14 +66,14 @@ func main() {
 		ec2fzf.fzfInput.WriteString("\n")
 	}
 
-	options := fzf.DefaultOptions()
-	fzf.PostProcessOptions(options)
-	options.Header = []string{
+	fzfOptions := fzf.DefaultOptions()
+	fzf.PostProcessOptions(fzfOptions)
+	fzfOptions.Header = []string{
 		"AWS EC2 Instances",
 	}
-	options.Multi = false
-	options.Input = ec2fzf.fzfInput
-	options.Printer = func(str string) {
+	fzfOptions.Multi = false
+	fzfOptions.Input = ec2fzf.fzfInput
+	fzfOptions.Printer = func(str string) {
 		i, err := InstanceIdFromString(str)
 		if err != nil {
 			fmt.Println(err)
@@ -87,7 +86,7 @@ func main() {
 		}
 		fmt.Printf(address)
 	}
-	fzf.Run(options)
+	fzf.Run(fzfOptions)
 }
 
 func (e *Ec2fzf) listInstances() ([]*ec2.Instance, error) {
