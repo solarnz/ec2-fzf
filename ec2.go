@@ -67,13 +67,14 @@ func (e *Ec2fzf) StringFromInstance(i *ec2.Instance) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("%s: %s", *i.InstanceId, buffer.String()), nil
+	return fmt.Sprintf("%19s: %s", *i.InstanceId, buffer.String()), nil
 }
 
 func InstanceIdFromString(s string) (string, error) {
 	i := strings.Index(s, ":")
+
 	if i < 0 {
 		return "", fmt.Errorf("Unable to find instance id")
 	}
-	return s[0:i], nil
+	return strings.TrimSpace(s[0:i]), nil
 }
