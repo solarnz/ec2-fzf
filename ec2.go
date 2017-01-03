@@ -23,8 +23,10 @@ func (e *Ec2fzf) ListInstances() ([]*ec2.Instance, error) {
 			Values: []*string{aws.String(split[1])},
 		})
 	}
-	params := &ec2.DescribeInstancesInput{
-		Filters: filters,
+	params := &ec2.DescribeInstancesInput{}
+
+	if len(filters) > 0 {
+		params.Filters = filters
 	}
 
 	err := e.ec2.DescribeInstancesPages(
