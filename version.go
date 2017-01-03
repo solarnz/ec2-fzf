@@ -1,3 +1,3 @@
 package ec2fzf
 
-const VERSION = "1.0"
+const VERSION = "2.0-dev"
