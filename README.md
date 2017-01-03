@@ -14,14 +14,14 @@ go get github.com/solarnz/ec2-fzf/cmd/ec2-fzf
 
 ## Usage
 
-You can pass `-private` to `ec2-fzf`, and it will return the private ip address
+You can pass `--private` to `ec2-fzf`, and it will return the private ip address
 of the instance, rather than the public dns record. This is useful for
 instances within a VPC.
 
-You can also set `-region` and pass the ec2 region you would like to list
+You can also set `--region` and pass the ec2 region you would like to list
 instances in.
 
-You can use `ec2-fzf` with ssh with `ssh $(ec2-fzf -region ap-southeast-2)`
+You can use `ec2-fzf` with ssh with `ssh $(ec2-fzf --region ap-southeast-2)`
 
 ## Configuration
 
