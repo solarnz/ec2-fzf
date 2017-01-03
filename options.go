@@ -1,12 +1,13 @@
 package ec2fzf
 
 import (
-	"flag"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/BurntSushi/toml"
 	"github.com/mitchellh/go-homedir"
+	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 type Options struct {
@@ -28,12 +29,12 @@ func ParseOptions() (Options, error) {
 	}
 	toml.DecodeFile(path, &options)
 
-	region := flag.String("region", options.Region, "The AWS region")
-	usePrivateIp := flag.Bool("private", options.UsePrivateIp, "return the private IP address of the instance rather than the public dns")
-	template := flag.String("template", options.Template, "Template")
-	version := flag.Bool("version", false, "Show the version of ec2-fzf")
+	region := kingpin.Flag("region", "The AWS region").Default(options.Region).String()
+	usePrivateIp := kingpin.Flag("private", "return the private IP address of the instance rather than the public dns").Default(strconv.FormatBool(options.UsePrivateIp)).Bool()
+	template := kingpin.Flag("template", "Template").Default(options.Template).String()
+	version := kingpin.Flag("version", "Show the version of ec2-fzf").Default("false").Bool()
 
-	flag.Parse()
+	kingpin.Parse()
 
 	if *version {
 		fmt.Printf("Ec2-fzf version %s\n", VERSION)
