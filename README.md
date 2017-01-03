@@ -23,6 +23,14 @@ instances in.
 
 You can use `ec2-fzf` with ssh with `ssh $(ec2-fzf --region ap-southeast-2)`
 
+You can add filters on to the instances that are listed with the `--filters`
+flag. You can define `--filters` multiple times to filter by more than one
+value. Valid values are those used in the [aws-sdk-go
+sdk](http://docs.aws.amazon.com/sdk-for-go/api/service/ec2/#DescribeInstancesInput)
+```
+ec2-fzf --filters tag:realm=test --filters tag:Name=Test
+```
+
 ## Configuration
 
 You can set the default configuration options in `~/.config/ec2-fzf`, example

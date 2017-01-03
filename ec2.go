@@ -11,7 +11,21 @@ import (
 
 func (e *Ec2fzf) ListInstances() ([]*ec2.Instance, error) {
 	instances := make([]*ec2.Instance, 0, 0)
-	params := &ec2.DescribeInstancesInput{}
+	filters := make([]*ec2.Filter, 0, 0)
+	for _, filter := range e.options.Filters {
+		split := strings.SplitN(filter, "=", 2)
+		if len(split) < 2 {
+			return nil, fmt.Errorf("Filters can only contain one '='. Filter \"%s\" has %d", filter, len(split))
+		}
+
+		filters = append(filters, &ec2.Filter{
+			Name:   aws.String(split[0]),
+			Values: []*string{aws.String(split[1])},
+		})
+	}
+	params := &ec2.DescribeInstancesInput{
+		Filters: filters,
+	}
 
 	err := e.ec2.DescribeInstancesPages(
 		params,

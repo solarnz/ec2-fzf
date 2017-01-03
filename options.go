@@ -14,6 +14,7 @@ type Options struct {
 	Region       string
 	UsePrivateIp bool
 	Template     string
+	Filters      []string
 }
 
 func ParseOptions() (Options, error) {
@@ -33,6 +34,7 @@ func ParseOptions() (Options, error) {
 	usePrivateIp := kingpin.Flag("private", "return the private IP address of the instance rather than the public dns").Default(strconv.FormatBool(options.UsePrivateIp)).Bool()
 	template := kingpin.Flag("template", "Template").Default(options.Template).String()
 	version := kingpin.Flag("version", "Show the version of ec2-fzf").Default("false").Bool()
+	filters := kingpin.Flag("filters", "Ec2 describe-instance filters").Strings()
 
 	kingpin.Parse()
 
@@ -45,5 +47,6 @@ func ParseOptions() (Options, error) {
 		Region:       *region,
 		UsePrivateIp: *usePrivateIp,
 		Template:     *template,
+		Filters:      *filters,
 	}, nil
 }
