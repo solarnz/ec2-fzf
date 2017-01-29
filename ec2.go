@@ -12,6 +12,12 @@ import (
 func (e *Ec2fzf) ListInstances() ([]*ec2.Instance, error) {
 	instances := make([]*ec2.Instance, 0, 0)
 	filters := make([]*ec2.Filter, 0, 0)
+
+	filters = append(filters, &ec2.Filter{
+		Name:   aws.String("instance-state-name"),
+		Values: []*string{aws.String("pending"), aws.String("running"), aws.String("shutting-down")},
+	})
+
 	for _, filter := range e.options.Filters {
 		split := strings.SplitN(filter, "=", 2)
 		if len(split) < 2 {
