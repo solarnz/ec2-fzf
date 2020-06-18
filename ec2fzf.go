@@ -74,7 +74,7 @@ func (e *Ec2fzf) Run() {
 		}(sess)
 	}
 
-	idx, err := finder.Find(
+	indexes, err := finder.FindMulti(
 		&instances,
 		func(i int) string {
 			str, _ := TemplateForInstance(instances[i], e.listTemplate)
@@ -96,10 +96,12 @@ func (e *Ec2fzf) Run() {
 		panic(err)
 	}
 
-	details := e.GetConnectionDetails(instances[idx])
-	if err != nil {
-		panic(err)
-	}
+	for idx := range indexes {
+		details := e.GetConnectionDetails(instances[idx])
+		if err != nil {
+			panic(err)
+		}
 
-	fmt.Printf("%s", details)
+		fmt.Printf("%s\n", details)
+	}
 }
