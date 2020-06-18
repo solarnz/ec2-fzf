@@ -56,14 +56,23 @@ func New() (*Ec2fzf, error) {
 }
 
 func (e *Ec2fzf) Run() {
-	instances, err := e.ListInstances()
+	instances := make([]*ec2.Instance, 0)
+	instanceChan := make(chan *ec2.Instance)
+
+	go func() {
+		for instance := range instanceChan {
+			instances = append(instances, instance)
+		}
+	}()
+
+	err := e.ListInstances(instanceChan)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	idx, err := finder.Find(
-		instances,
+		&instances,
 		func(i int) string {
 			str, _ := TemplateForInstance(instances[i], e.listTemplate)
 			return fmt.Sprintf("%s\n", str)
@@ -77,6 +86,7 @@ func (e *Ec2fzf) Run() {
 
 			return str
 		}),
+		finder.WithHotReload(),
 	)
 
 	if err != nil {

@@ -10,8 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-func (e *Ec2fzf) ListInstances() ([]*ec2.Instance, error) {
-	instances := make([]*ec2.Instance, 0, 0)
+func (e *Ec2fzf) ListInstances(out chan *ec2.Instance) error {
 	filters := make([]*ec2.Filter, 0, 0)
 
 	filters = append(filters, &ec2.Filter{
@@ -22,7 +21,7 @@ func (e *Ec2fzf) ListInstances() ([]*ec2.Instance, error) {
 	for _, filter := range e.options.Filters {
 		split := strings.SplitN(filter, "=", 2)
 		if len(split) < 2 {
-			return nil, fmt.Errorf("Filters can only contain one '='. Filter \"%s\" has %d", filter, len(split))
+			return fmt.Errorf("Filters can only contain one '='. Filter \"%s\" has %d", filter, len(split))
 		}
 
 		filters = append(filters, &ec2.Filter{
@@ -41,14 +40,14 @@ func (e *Ec2fzf) ListInstances() ([]*ec2.Instance, error) {
 		func(p *ec2.DescribeInstancesOutput, lastPage bool) bool {
 			for _, r := range p.Reservations {
 				for _, i := range r.Instances {
-					instances = append(instances, i)
+					out <- i
 				}
 			}
 			return !lastPage
 		},
 	)
 
-	return instances, err
+	return err
 }
 
 func (e *Ec2fzf) GetConnectionDetails(instance *ec2.Instance) string {
