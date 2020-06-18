@@ -1,13 +1,8 @@
 package ec2fzf
 
 import (
-	"fmt"
-	"os"
-	"strconv"
-
-	"github.com/BurntSushi/toml"
-	"github.com/mitchellh/go-homedir"
-	"gopkg.in/alecthomas/kingpin.v2"
+	"github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 type Options struct {
@@ -18,12 +13,30 @@ type Options struct {
 	Filters         []string
 }
 
-func ParseOptions() (Options, error) {
-	options := Options{
-		Region:       "us-east-1",
-		UsePrivateIp: false,
-		Template:     `{{ .InstanceId }}: {{index .Tags "Name"}}`,
-		PreviewTemplate: `
+func ParseOptions() Options {
+	viper.SetConfigName("config")
+	viper.SetConfigType("toml")
+	viper.AddConfigPath("$HOME/.config/ec2-fzf")
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			// Config file not found; ignore error if desired
+		} else {
+			panic(err)
+		}
+	}
+
+	pflag.String("region", "", "The AWS region")
+	pflag.Bool("use-private-ip", true, "Return the private ip of the instance selected")
+	pflag.StringSlice("filters", []string{}, "Filters to apply with the ec2 api call")
+	pflag.Parse()
+	viper.BindPFlags(pflag.CommandLine)
+
+	viper.RegisterAlias("UsePrivateIp", "use-private-ip")
+
+	viper.SetDefault("Region", "us-east-1")
+	viper.SetDefault("UsePrivateIp", false)
+	viper.SetDefault("Template", `{{ .InstanceId }}: {{index .Tags "Name"}}`)
+	viper.SetDefault("PreviewTemplate", `
 			Name: {{index .Tags "Name"}}
 			Private IP: {{.PrivateIpAddress}}
 			Public IP: {{.PublicIpAddress}}
@@ -33,33 +46,13 @@ func ParseOptions() (Options, error) {
 				{{ indent 2 $key }}: {{ $value }}
 			{{- end -}}
 		`,
-	}
-
-	path, err := homedir.Expand("~/.config/ec2-fzf")
-	if err != nil {
-		return Options{}, err
-	}
-	toml.DecodeFile(path, &options)
-
-	region := kingpin.Flag("region", "The AWS region").Default(options.Region).String()
-	usePrivateIp := kingpin.Flag("private", "return the private IP address of the instance rather than the public dns").Default(strconv.FormatBool(options.UsePrivateIp)).Bool()
-	template := kingpin.Flag("template", "Template").Default(options.Template).String()
-	previewTemplate := kingpin.Flag("preview-template", "previewTemplate").Default(options.PreviewTemplate).String()
-	version := kingpin.Flag("version", "Show the version of ec2-fzf").Default("false").Bool()
-	filters := kingpin.Flag("filters", "Ec2 describe-instance filters").Strings()
-
-	kingpin.Parse()
-
-	if *version {
-		fmt.Printf("Ec2-fzf version %s\n", VERSION)
-		os.Exit(1)
-	}
+	)
 
 	return Options{
-		Region:          *region,
-		UsePrivateIp:    *usePrivateIp,
-		Template:        *template,
-		PreviewTemplate: *previewTemplate,
-		Filters:         *filters,
-	}, nil
+		Region:          viper.GetString("Region"),
+		UsePrivateIp:    viper.GetBool("UsePrivateIp"),
+		Template:        viper.GetString("Template"),
+		PreviewTemplate: viper.GetString("PreviewTemplate"),
+		Filters:         viper.GetStringSlice("Filters"),
+	}
 }

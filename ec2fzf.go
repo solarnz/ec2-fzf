@@ -22,10 +22,7 @@ type Ec2fzf struct {
 }
 
 func New() (*Ec2fzf, error) {
-	options, err := ParseOptions()
-	if err != nil {
-		return nil, err
-	}
+	options := ParseOptions()
 
 	sess, err := session.NewSessionWithOptions(session.Options{
 		Config: aws.Config{

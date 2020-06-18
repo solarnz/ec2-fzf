@@ -1,6 +1,5 @@
-# github.com/BurntSushi/toml v0.2.1-0.20160717150709-99064174e013
+# github.com/BurntSushi/toml v0.3.1
 ## explicit
-github.com/BurntSushi/toml
 # github.com/Masterminds/goutils v1.1.0
 ## explicit
 github.com/Masterminds/goutils
@@ -12,11 +11,8 @@ github.com/Masterminds/semver
 github.com/Masterminds/sprig
 # github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc
 ## explicit
-github.com/alecthomas/template
-github.com/alecthomas/template/parse
 # github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf
 ## explicit
-github.com/alecthomas/units
 # github.com/aws/aws-sdk-go v1.6.9-0.20161222213112-9a0c8a57d9bb
 ## explicit
 github.com/aws/aws-sdk-go/aws
@@ -44,6 +40,8 @@ github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/private/waiter
 github.com/aws/aws-sdk-go/service/ec2
 github.com/aws/aws-sdk-go/service/sts
+# github.com/fsnotify/fsnotify v1.4.7
+github.com/fsnotify/fsnotify
 # github.com/gdamore/encoding v0.0.0-20151215212835-b23993cbb635
 ## explicit
 # github.com/gdamore/tcell v0.0.0-20161206171916-44772c121bb7
@@ -54,6 +52,17 @@ github.com/go-ini/ini
 # github.com/google/uuid v1.1.1
 ## explicit
 github.com/google/uuid
+# github.com/hashicorp/hcl v1.0.0
+github.com/hashicorp/hcl
+github.com/hashicorp/hcl/hcl/ast
+github.com/hashicorp/hcl/hcl/parser
+github.com/hashicorp/hcl/hcl/printer
+github.com/hashicorp/hcl/hcl/scanner
+github.com/hashicorp/hcl/hcl/strconv
+github.com/hashicorp/hcl/hcl/token
+github.com/hashicorp/hcl/json/parser
+github.com/hashicorp/hcl/json/scanner
+github.com/hashicorp/hcl/json/token
 # github.com/huandu/xstrings v1.3.2
 ## explicit
 github.com/huandu/xstrings
@@ -80,26 +89,52 @@ github.com/ktr0731/go-fuzzyfinder/matching
 github.com/ktr0731/go-fuzzyfinder/scoring
 # github.com/lucasb-eyer/go-colorful v0.0.0-20160811215958-9c2852a141bf
 ## explicit
+# github.com/magiconair/properties v1.8.1
+github.com/magiconair/properties
 # github.com/mattn/go-runewidth v0.0.9
 github.com/mattn/go-runewidth
 # github.com/mitchellh/copystructure v1.0.0
 ## explicit
 github.com/mitchellh/copystructure
-# github.com/mitchellh/go-homedir v0.0.0-20161203194507-b8bc1bf76747
+# github.com/mitchellh/go-homedir v1.0.0
 ## explicit
-github.com/mitchellh/go-homedir
+# github.com/mitchellh/mapstructure v1.1.2
+github.com/mitchellh/mapstructure
 # github.com/mitchellh/reflectwalk v1.0.0
 github.com/mitchellh/reflectwalk
 # github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1
 github.com/nsf/termbox-go
+# github.com/pelletier/go-toml v1.2.0
+github.com/pelletier/go-toml
 # github.com/pkg/errors v0.9.1
 github.com/pkg/errors
 # github.com/solarnz/fzf v0.0.0-20161224081451-ba1433bf3826
 ## explicit
+# github.com/spf13/afero v1.1.2
+github.com/spf13/afero
+github.com/spf13/afero/mem
+# github.com/spf13/cast v1.3.0
+github.com/spf13/cast
+# github.com/spf13/jwalterweatherman v1.0.0
+github.com/spf13/jwalterweatherman
+# github.com/spf13/pflag v1.0.5
+## explicit
+github.com/spf13/pflag
+# github.com/spf13/viper v1.7.0
+## explicit
+github.com/spf13/viper
+# github.com/subosito/gotenv v1.2.0
+github.com/subosito/gotenv
 # golang.org/x/crypto v0.0.0-20200604202706-70a84ac30bf9
 ## explicit
 golang.org/x/crypto/pbkdf2
 golang.org/x/crypto/scrypt
-# gopkg.in/alecthomas/kingpin.v2 v2.2.3
-## explicit
-gopkg.in/alecthomas/kingpin.v2
+# golang.org/x/sys v0.0.0-20190624142023-c5567b49c5d0
+golang.org/x/sys/unix
+# golang.org/x/text v0.3.2
+golang.org/x/text/transform
+golang.org/x/text/unicode/norm
+# gopkg.in/ini.v1 v1.51.0
+gopkg.in/ini.v1
+# gopkg.in/yaml.v2 v2.2.4
+gopkg.in/yaml.v2

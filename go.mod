@@ -3,7 +3,7 @@ module github.com/solarnz/ec2-fzf
 go 1.14
 
 require (
-	github.com/BurntSushi/toml v0.2.1-0.20160717150709-99064174e013
+	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible
@@ -25,8 +25,9 @@ require (
 	github.com/ktr0731/go-fuzzyfinder v0.2.1
 	github.com/lucasb-eyer/go-colorful v0.0.0-20160811215958-9c2852a141bf // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
-	github.com/mitchellh/go-homedir v0.0.0-20161203194507-b8bc1bf76747
+	github.com/mitchellh/go-homedir v1.0.0 // indirect
 	github.com/solarnz/fzf v0.0.0-20161224081451-ba1433bf3826 // indirect
+	github.com/spf13/pflag v1.0.5
+	github.com/spf13/viper v1.7.0
 	golang.org/x/crypto v0.0.0-20200604202706-70a84ac30bf9 // indirect
-	gopkg.in/alecthomas/kingpin.v2 v2.2.3
 )
