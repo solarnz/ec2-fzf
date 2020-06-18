@@ -16,10 +16,10 @@ require (
 	github.com/junegunn/go-runewidth v0.0.0-20141007004355-63c378b85129 // indirect
 	github.com/junegunn/go-shellwords v0.0.0-20141213150751-35d512af75e2 // indirect
 	github.com/junegunn/tcell v0.0.0-20161125072621-d4838882df49 // indirect
+	github.com/ktr0731/go-fuzzyfinder v0.2.1
 	github.com/lucasb-eyer/go-colorful v0.0.0-20160811215958-9c2852a141bf // indirect
-	github.com/mattn/go-runewidth v0.0.2-0.20161012013512-737072b4e32b // indirect
 	github.com/mitchellh/go-homedir v0.0.0-20161203194507-b8bc1bf76747
-	github.com/solarnz/fzf v0.0.0-20161224081451-ba1433bf3826
+	github.com/solarnz/fzf v0.0.0-20161224081451-ba1433bf3826 // indirect
 	golang.org/x/sys v0.0.0-20161214190518-d75a52659825 // indirect
 	golang.org/x/text v0.0.0-20161216064924-a49bea13b776 // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.3

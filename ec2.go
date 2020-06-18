@@ -50,23 +50,11 @@ func (e *Ec2fzf) ListInstances() ([]*ec2.Instance, error) {
 	return instances, err
 }
 
-func (e *Ec2fzf) GetConnectionDetails(instanceId string) (string, error) {
-	params := &ec2.DescribeInstancesInput{
-		InstanceIds: []*string{aws.String(instanceId)},
-	}
-	resp, err := e.ec2.DescribeInstances(params)
-	if err != nil {
-		return "", err
-	}
-
-	if !(len(resp.Reservations) == 1) || !(len(resp.Reservations[0].Instances) == 1) {
-		return "", fmt.Errorf("No instance could be found for %s", instanceId)
-	}
-
+func (e *Ec2fzf) GetConnectionDetails(instance *ec2.Instance) string {
 	if e.options.UsePrivateIp {
-		return *resp.Reservations[0].Instances[0].PrivateIpAddress, nil
+		return *instance.PrivateIpAddress
 	}
-	return *resp.Reservations[0].Instances[0].PublicDnsName, nil
+	return *instance.PublicDnsName
 }
 
 func (e *Ec2fzf) StringFromInstance(i *ec2.Instance) (string, error) {

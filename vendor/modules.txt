@@ -37,10 +37,8 @@ github.com/aws/aws-sdk-go/service/ec2
 github.com/aws/aws-sdk-go/service/sts
 # github.com/gdamore/encoding v0.0.0-20151215212835-b23993cbb635
 ## explicit
-github.com/gdamore/encoding
 # github.com/gdamore/tcell v0.0.0-20161206171916-44772c121bb7
 ## explicit
-github.com/gdamore/tcell
 # github.com/go-ini/ini v1.23.0
 ## explicit
 github.com/go-ini/ini
@@ -49,48 +47,36 @@ github.com/go-ini/ini
 github.com/jmespath/go-jmespath
 # github.com/junegunn/fzf v0.0.0-20161224035307-c7b076400297
 ## explicit
-github.com/junegunn/fzf/src/algo
-github.com/junegunn/fzf/src/tui
-github.com/junegunn/fzf/src/util
 # github.com/junegunn/go-isatty v0.0.0-20160806122752-66b8e73f3f5c
 ## explicit
-github.com/junegunn/go-isatty
 # github.com/junegunn/go-runewidth v0.0.0-20141007004355-63c378b85129
 ## explicit
-github.com/junegunn/go-runewidth
 # github.com/junegunn/go-shellwords v0.0.0-20141213150751-35d512af75e2
 ## explicit
-github.com/junegunn/go-shellwords
 # github.com/junegunn/tcell v0.0.0-20161125072621-d4838882df49
 ## explicit
-github.com/junegunn/tcell
-github.com/junegunn/tcell/encoding
+# github.com/ktr0731/go-fuzzyfinder v0.2.1
+## explicit
+github.com/ktr0731/go-fuzzyfinder
+github.com/ktr0731/go-fuzzyfinder/matching
+github.com/ktr0731/go-fuzzyfinder/scoring
 # github.com/lucasb-eyer/go-colorful v0.0.0-20160811215958-9c2852a141bf
 ## explicit
-github.com/lucasb-eyer/go-colorful
-# github.com/mattn/go-runewidth v0.0.2-0.20161012013512-737072b4e32b
-## explicit
+# github.com/mattn/go-runewidth v0.0.9
 github.com/mattn/go-runewidth
 # github.com/mitchellh/go-homedir v0.0.0-20161203194507-b8bc1bf76747
 ## explicit
 github.com/mitchellh/go-homedir
+# github.com/nsf/termbox-go v0.0.0-20200418040025-38ba6e5628f1
+github.com/nsf/termbox-go
+# github.com/pkg/errors v0.9.1
+github.com/pkg/errors
 # github.com/solarnz/fzf v0.0.0-20161224081451-ba1433bf3826
 ## explicit
-github.com/solarnz/fzf/src
 # golang.org/x/sys v0.0.0-20161214190518-d75a52659825
 ## explicit
-golang.org/x/sys/unix
 # golang.org/x/text v0.0.0-20161216064924-a49bea13b776
 ## explicit
-golang.org/x/text/encoding
-golang.org/x/text/encoding/charmap
-golang.org/x/text/encoding/internal
-golang.org/x/text/encoding/internal/identifier
-golang.org/x/text/encoding/japanese
-golang.org/x/text/encoding/korean
-golang.org/x/text/encoding/simplifiedchinese
-golang.org/x/text/encoding/traditionalchinese
-golang.org/x/text/transform
 # gopkg.in/alecthomas/kingpin.v2 v2.2.3
 ## explicit
 gopkg.in/alecthomas/kingpin.v2

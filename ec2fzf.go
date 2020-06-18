@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/solarnz/fzf/src"
+	finder "github.com/ktr0731/go-fuzzyfinder"
 )
 
 type Ec2fzf struct {
@@ -51,35 +51,22 @@ func (e *Ec2fzf) Run() {
 		os.Exit(1)
 	}
 
-	for _, i := range instances {
-		str, err := e.StringFromInstance(i)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		e.fzfInput.WriteString(str)
-		e.fzfInput.WriteString("\n")
+	idx, err := finder.Find(
+		instances,
+		func(i int) string {
+			str, _ := e.StringFromInstance(instances[i])
+			return fmt.Sprintf("%s\n", str)
+		},
+	)
+
+	if err != nil {
+		panic(err)
 	}
 
-	fzfOptions := fzf.DefaultOptions()
-	fzf.PostProcessOptions(fzfOptions)
-	fzfOptions.Header = []string{
-		"AWS EC2 Instances",
+	details := e.GetConnectionDetails(instances[idx])
+	if err != nil {
+		panic(err)
 	}
-	fzfOptions.Multi = false
-	fzfOptions.Input = e.fzfInput
-	fzfOptions.Printer = func(str string) {
-		i, err := InstanceIdFromString(str)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		address, err := e.GetConnectionDetails(i)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		fmt.Printf(address)
-	}
-	fzf.Run(fzfOptions)
+
+	fmt.Printf("%s", details)
 }
