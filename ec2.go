@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-func (e *Ec2fzf) ListInstances(out chan *ec2.Instance) error {
+func (e *Ec2fzf) ListInstances(ec2Client *ec2.EC2, out chan *ec2.Instance) error {
 	filters := make([]*ec2.Filter, 0, 0)
 
 	filters = append(filters, &ec2.Filter{
@@ -35,7 +35,7 @@ func (e *Ec2fzf) ListInstances(out chan *ec2.Instance) error {
 		params.Filters = filters
 	}
 
-	err := e.ec2.DescribeInstancesPages(
+	err := ec2Client.DescribeInstancesPages(
 		params,
 		func(p *ec2.DescribeInstancesOutput, lastPage bool) bool {
 			for _, r := range p.Reservations {

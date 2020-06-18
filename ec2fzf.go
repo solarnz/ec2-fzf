@@ -3,7 +3,6 @@ package ec2fzf
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
@@ -14,23 +13,27 @@ import (
 )
 
 type Ec2fzf struct {
-	ec2             *ec2.EC2
 	fzfInput        *bytes.Buffer
 	options         Options
 	listTemplate    *template.Template
 	previewTemplate *template.Template
+	ec2Sessions     []*session.Session
 }
 
 func New() (*Ec2fzf, error) {
 	options := ParseOptions()
 
-	sess, err := session.NewSessionWithOptions(session.Options{
-		Config: aws.Config{
-			Region: aws.String(options.Region),
-		},
-	})
-	if err != nil {
-		return nil, err
+	sessions := make([]*session.Session, 0)
+	for _, region := range options.Regions {
+		sess, err := session.NewSessionWithOptions(session.Options{
+			Config: aws.Config{
+				Region: aws.String(region),
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		sessions = append(sessions, sess)
 	}
 
 	tmpl, err := template.New("Instance").Funcs(sprig.TxtFuncMap()).Parse(options.Template)
@@ -44,11 +47,11 @@ func New() (*Ec2fzf, error) {
 	}
 
 	return &Ec2fzf{
-		ec2:             ec2.New(sess),
 		fzfInput:        new(bytes.Buffer),
 		options:         options,
 		listTemplate:    tmpl,
 		previewTemplate: previewTemplate,
+		ec2Sessions:     sessions,
 	}, nil
 }
 
@@ -62,10 +65,13 @@ func (e *Ec2fzf) Run() {
 		}
 	}()
 
-	err := e.ListInstances(instanceChan)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	for _, sess := range e.ec2Sessions {
+		go func(s *session.Session) {
+			err := e.ListInstances(ec2.New(s), instanceChan)
+			if err != nil {
+				panic(err)
+			}
+		}(sess)
 	}
 
 	idx, err := finder.Find(
