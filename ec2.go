@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+	"text/template"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
@@ -57,7 +58,7 @@ func (e *Ec2fzf) GetConnectionDetails(instance *ec2.Instance) string {
 	return *instance.PublicDnsName
 }
 
-func (e *Ec2fzf) StringFromInstance(i *ec2.Instance) (string, error) {
+func TemplateForInstance(i *ec2.Instance, t *template.Template) (output string, err error) {
 	tags := make(map[string]string)
 
 	for _, t := range i.Tags {
@@ -65,19 +66,19 @@ func (e *Ec2fzf) StringFromInstance(i *ec2.Instance) (string, error) {
 	}
 
 	buffer := new(bytes.Buffer)
-	err := e.template.Execute(
+	err = t.Execute(
 		buffer,
 		struct {
 			Tags map[string]string
+			*ec2.Instance
 		}{
-			Tags: tags,
+			tags,
+			i,
 		},
 	)
-	if err != nil {
-		return "", err
-	}
 
-	return fmt.Sprintf("%19s: %s", *i.InstanceId, buffer.String()), nil
+	output = buffer.String()
+	return
 }
 
 func InstanceIdFromString(s string) (string, error) {
