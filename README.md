@@ -33,7 +33,7 @@ ec2-fzf --filters tag:realm=test --filters tag:Name=Test
 
 ## Configuration
 
-You can set the default configuration options in `~/.config/ec2-fzf`, example
+You can set the default configuration options in `~/.config/ec2-fzf/config.toml`, example
 ```
 Region = "us-east-1"
 Template = "{{index .Tags \"Name\"}}"
