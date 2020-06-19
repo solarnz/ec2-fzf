@@ -44,7 +44,7 @@ func ParseOptions() Options {
 			Public IP:   {{.PublicIpAddress}}
 
 			Tags:
-			{{ range $key, $value := .Tags -}}
+			{{ range $key, $value := .Tags }}
 				{{ indent 2 $key }}: {{ $value }}
 			{{- end -}}
 		`,
