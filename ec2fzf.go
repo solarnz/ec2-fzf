@@ -96,7 +96,7 @@ func (e *Ec2fzf) Run() {
 		panic(err)
 	}
 
-	for idx := range indexes {
+	for _, idx := range indexes {
 		details := e.GetConnectionDetails(instances[idx])
 		if err != nil {
 			panic(err)
