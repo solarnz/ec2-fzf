@@ -2,7 +2,9 @@ package ec2fzf
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"os"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
@@ -93,6 +95,9 @@ func (e *Ec2fzf) Run() {
 	)
 
 	if err != nil {
+		if errors.Is(err, finder.ErrAbort) {
+			os.Exit(1)
+		}
 		panic(err)
 	}
 
