@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"sync"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
@@ -59,25 +60,28 @@ func New() (*Ec2fzf, error) {
 
 func (e *Ec2fzf) Run() {
 	instances := make([]*ec2.Instance, 0)
-	instanceChan := make(chan *ec2.Instance)
+	instancesLock := &sync.Mutex{}
 
-	go func() {
-		for instance := range instanceChan {
-			instances = append(instances, instance)
-		}
-	}()
-
+	wg := &sync.WaitGroup{}
 	for _, sess := range e.ec2Sessions {
+		wg.Add(1)
 		go func(s *session.Session) {
-			err := e.ListInstances(ec2.New(s), instanceChan)
+			retrivedInstances, err := e.ListInstances(ec2.New(s))
 			if err != nil {
 				panic(err)
 			}
+
+			instancesLock.Lock()
+			instances = append(instances, retrivedInstances...)
+			instancesLock.Unlock()
+			wg.Done()
 		}(sess)
 	}
 
+	wg.Wait()
+
 	indexes, err := finder.FindMulti(
-		&instances,
+		instances,
 		func(i int) string {
 			str, _ := TemplateForInstance(instances[i], e.listTemplate)
 			return fmt.Sprintf("%s\n", str)
@@ -91,7 +95,6 @@ func (e *Ec2fzf) Run() {
 
 			return str
 		}),
-		finder.WithHotReload(),
 	)
 
 	if err != nil {
