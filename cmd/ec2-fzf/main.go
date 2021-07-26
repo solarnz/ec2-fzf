@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/solarnz/ec2-fzf"
+	ec2fzf "github.com/solarnz/ec2-fzf"
 )
 
 func main() {

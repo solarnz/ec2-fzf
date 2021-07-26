@@ -1,4 +1,4 @@
-module github.com/solarnz/ec2-fzf
+module github.com/richie-tt/ec2-fzf
 
 go 1.14
 
