@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"sync"
 	"text/template"
@@ -68,7 +69,10 @@ func (e *Ec2fzf) Run() {
 		go func(s *session.Session) {
 			retrivedInstances, err := e.ListInstances(ec2.New(s))
 			if err != nil {
-				panic(err)
+				log.Fatal(err.Error())
+				fmt.Println("")
+				os.Exit(1)
+				// panic(err)
 			}
 
 			instancesLock.Lock()
