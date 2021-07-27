@@ -52,7 +52,7 @@ func (e *Ec2fzf) ListInstances(ec2Client *ec2.EC2) ([]*ec2.Instance, error) {
 }
 
 func (e *Ec2fzf) GetConnectionDetails(instance *ec2.Instance) string {
-	if e.options.UsePrivateIp {
+	if e.options.GetPrivateIp {
 		return *instance.PrivateIpAddress
 	}
 	return *instance.PublicDnsName

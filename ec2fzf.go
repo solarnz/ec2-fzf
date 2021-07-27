@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"sync"
 	"text/template"
@@ -27,8 +26,20 @@ type Ec2fzf struct {
 func New() (*Ec2fzf, error) {
 	options := ParseOptions()
 
+	if options.Version {
+		showVersion()
+		os.Exit(0)
+	}
+	fmt.Println("after version")
+
 	sessions := make([]*session.Session, 0)
+
+	fmt.Println("regions", len(options.Regions), options.Regions)
+
 	for _, region := range options.Regions {
+
+		fmt.Println("region", region)
+
 		sess, err := session.NewSessionWithOptions(session.Options{
 			Config: aws.Config{
 				Region: aws.String(region),
@@ -39,6 +50,8 @@ func New() (*Ec2fzf, error) {
 		}
 		sessions = append(sessions, sess)
 	}
+
+	print(sessions)
 
 	tmpl, err := template.New("Instance").Funcs(sprig.TxtFuncMap()).Parse(options.Template)
 	if err != nil {
@@ -69,8 +82,8 @@ func (e *Ec2fzf) Run() {
 		go func(s *session.Session) {
 			retrivedInstances, err := e.ListInstances(ec2.New(s))
 			if err != nil {
-				log.Fatal(err.Error())
-				fmt.Println("")
+				// log.Fatal(err.Error())
+				fmt.Println(err.Error())
 				os.Exit(1)
 				// panic(err)
 			}

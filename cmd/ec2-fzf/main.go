@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+
 	fzf, err := ec2fzf.New()
 	if err != nil {
 		fmt.Println(err)
