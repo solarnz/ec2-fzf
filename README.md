@@ -1,3 +1,8 @@
+**This is fork of [solarnz/ec2-fzf](https://github.com/solarnz/ec2-fzf) repository, who inspired me to add some features.**
+<br>
+<br>
+
+
 # ec2-fzf
 
 ec2-fzf is a tool that utilised the [fzf](https://github.com/junegunn/fzf)
@@ -13,6 +18,17 @@ go get github.com/solarnz/ec2-fzf/cmd/ec2-fzf
 ```
 
 ## Usage
+
+- Arguments
+  - `-h,--help` show help
+  - `-v,--version` Show version
+  - `-r,--regions` List of regions split by comma. Each AWS region from the list will be scanned result of EC2 instances will be merged in one final result.  
+  - `-i,--get-private-ip` Return private IP address from selectec instance.
+  - `-f,--filters` 
+
+
+
+  
 
 You can pass `--private` to `ec2-fzf`, and it will return the private ip address
 of the instance, rather than the public dns record. This is useful for
