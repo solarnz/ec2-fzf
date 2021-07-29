@@ -3,6 +3,8 @@
 <br>
 
 
+# IN DEVELOP
+
 # ec2-fzf
 
 ec2-fzf is a tool that utilised the [fzf](https://github.com/junegunn/fzf)
@@ -24,28 +26,25 @@ go get github.com/solarnz/ec2-fzf/cmd/ec2-fzf
   - `-v,--version` Show version
   - `-r,--regions` List of regions split by comma. Each AWS region from the list will be scanned result of EC2 instances will be merged in one final result.  
   - `-i,--get-private-ip` Return private IP address from selectec instance.
-  - `-f,--filters` 
-
-
-
-  
-
-You can pass `--private` to `ec2-fzf`, and it will return the private ip address
-of the instance, rather than the public dns record. This is useful for
-instances within a VPC.
-
-You can also set `--region` and pass the ec2 region you would like to list
-instances in.
-
-You can use `ec2-fzf` with ssh with `ssh $(ec2-fzf --region ap-southeast-2)`
-
-You can add filters on to the instances that are listed with the `--filters`
-flag. You can define `--filters` multiple times to filter by more than one
-value. Valid values are those used in the [aws-sdk-go
+  - `-f,--filters` Use filters to limit results, Valid values are those used in the [aws-sdk-go
 sdk](http://docs.aws.amazon.com/sdk-for-go/api/service/ec2/#DescribeInstancesInput)
-```
-ec2-fzf --filters tag:realm=test --filters tag:Name=Test
-```
+
+- Keyboard shortcuts
+  - `<ctrl-f>` - Refresh list
+  - `<ctrl-l>` - Show instances list only from a specific region
+
+- Command line
+  ```sh
+  ssh $(ec2-fzf --regions ap-southeast-2)
+  ```
+
+- Bash function
+  ```sh
+  function sshe(){
+    local ip=$(ec2-fzf --regions ap-southeast-2 --get-private-ip)
+    ssh root@$ip
+  }
+  ```
 
 ## Configuration
 
