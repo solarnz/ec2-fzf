@@ -4,10 +4,10 @@ import "fmt"
 
 // Values for these are injected by the build.
 var (
-	BuildTime = "unset" // BuildTime is a time label of the moment when the binary was built
-	Commit    = "unset" // Commit is a last commit hash at the moment when the binary was built
-	Release   = "unset" // Release is a semantic Version of current build
-	Arch      = "unset" // Arch type
+	BuildTime string = "unset" // BuildTime is a time label of the moment when the binary was built
+	Commit    string = "unset" // Commit is a last commit hash at the moment when the binary was built
+	Release   string = "unset" // Release is a semantic Version of current build
+	Arch      string = "unset" // Arch type
 )
 
 func showVersion() {

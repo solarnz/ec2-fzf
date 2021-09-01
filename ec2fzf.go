@@ -2,27 +2,19 @@ package ec2fzf
 
 import (
 	"bytes"
-	"errors"
+	"context"
 	"fmt"
 	"os"
 	"sync"
 	"text/template"
 
-	"github.com/Masterminds/sprig"
+	sprig "github.com/Masterminds/sprig/v3"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	finder "github.com/ktr0731/go-fuzzyfinder"
 )
 
-type Ec2fzf struct {
-	fzfInput        *bytes.Buffer
-	options         Options
-	listTemplate    *template.Template
-	previewTemplate *template.Template
-	ec2Sessions     []*session.Session
-}
-
+// New init sessions and prepare templates
 func New() (*Ec2fzf, error) {
 	options := ParseOptions()
 
@@ -30,17 +22,13 @@ func New() (*Ec2fzf, error) {
 		showVersion()
 		os.Exit(0)
 	}
-	fmt.Println("after version")
 
-	sessions := make([]*session.Session, 0)
-
-	fmt.Println("regions", len(options.Regions), options.Regions)
+	ec2resource := make([]*EC2Resource, 0)
 
 	for _, region := range options.Regions {
 
-		fmt.Println("region", region)
-
 		sess, err := session.NewSessionWithOptions(session.Options{
+
 			Config: aws.Config{
 				Region: aws.String(region),
 			},
@@ -48,10 +36,16 @@ func New() (*Ec2fzf, error) {
 		if err != nil {
 			return nil, err
 		}
-		sessions = append(sessions, sess)
-	}
 
-	print(sessions)
+		r := EC2Resource{
+			Region: Region{
+				Name: region,
+			},
+			Client: *sess,
+		}
+		ec2resource = append(ec2resource, &r)
+
+	}
 
 	tmpl, err := template.New("Instance").Funcs(sprig.TxtFuncMap()).Parse(options.Template)
 	if err != nil {
@@ -68,65 +62,100 @@ func New() (*Ec2fzf, error) {
 		options:         options,
 		listTemplate:    tmpl,
 		previewTemplate: previewTemplate,
-		ec2Sessions:     sessions,
+		EC2Resources:    ec2resource,
 	}, nil
 }
 
-func (e *Ec2fzf) Run() {
-	instances := make([]*ec2.Instance, 0)
-	instancesLock := &sync.Mutex{}
+func updateInstances(e *Ec2fzf, res EC2Resource) {
+	for _, val := range e.EC2Resources {
+		if val.Region.Name == res.Region.Name {
+			val.Instances = res.Instances
+			// fmt.Println("znalazłem", key, val.Region.Name)
+		}
+	}
+}
+
+func (e *Ec2fzf) getEc2List(ctx context.Context) {
 
 	wg := &sync.WaitGroup{}
-	for _, sess := range e.ec2Sessions {
+
+	chResult := make(chan EC2Resource, len(e.EC2Resources))
+
+	for _, res := range e.EC2Resources {
 		wg.Add(1)
-		go func(s *session.Session) {
-			retrivedInstances, err := e.ListInstances(ec2.New(s))
+
+		go func(c context.Context, r EC2Resource) {
+
+			// ec2Client := ec2.New(&r.Client)
+			retrivedInstances, err := e.ListInstances(c, ec2.New(&r.Client))
 			if err != nil {
-				// log.Fatal(err.Error())
-				fmt.Println(err.Error())
-				os.Exit(1)
-				// panic(err)
+				message := fmt.Sprintf("region: %s is not avaiable. err: %s", r.Region.Name, err.Error())
+				fmt.Println(message)
+
+			} else {
+				resource := r.DeepCopy()
+				resource.Instances = retrivedInstances
+				resource.Region.Available = true
+				chResult <- *resource
 			}
 
-			instancesLock.Lock()
-			instances = append(instances, retrivedInstances...)
-			instancesLock.Unlock()
 			wg.Done()
-		}(sess)
+		}(ctx, *res)
 	}
 
 	wg.Wait()
+	close(chResult)
+
+	for val := range chResult {
+		updateInstances(e, val)
+	}
+
+	for _, val := range e.EC2Resources {
+		fmt.Println("valll", val.Region.Name, len(val.Instances))
+	}
+
+}
+
+// func
+
+// Run create list of ec2
+func (e *Ec2fzf) Run() {
+
+	ctx := context.Background()
+	e.getEc2List(ctx)
+
+	os.Exit(0)
 
 	indexes, err := finder.FindMulti(
-		instances,
-		func(i int) string {
-			str, _ := TemplateForInstance(instances[i], e.listTemplate)
-			return fmt.Sprintf("%s\n", str)
-		},
-		finder.WithPreviewWindow(func(i, w, h int) string {
-			if i == -1 {
-				return ""
-			}
+	// 	instances,
+	// 	func(i int) string {
+	// 		str, _ := TemplateForInstance(instances[i], e.listTemplate)
+	// 		return fmt.Sprintf("%s\n", str)
+	// 	},
+	// 	finder.WithPreviewWindow(func(i, w, h int) string {
+	// 		if i == -1 {
+	// 			return ""
+	// 		}
 
-			str, _ := TemplateForInstance(instances[i], e.previewTemplate)
+	// 		str, _ := TemplateForInstance(instances[i], e.previewTemplate)
 
-			return str
-		}),
+	// 		return str
+	// 	}),
 	)
 
-	if err != nil {
-		if errors.Is(err, finder.ErrAbort) {
-			os.Exit(1)
-		}
-		panic(err)
-	}
+	// if err != nil {
+	// 	if errors.Is(err, finder.ErrAbort) {
+	// 		os.Exit(1)
+	// 	}
+	// 	panic(err)
+	// }
 
-	for _, idx := range indexes {
-		details := e.GetConnectionDetails(instances[idx])
-		if err != nil {
-			panic(err)
-		}
+	// for _, idx := range indexes {
+	// 	details := e.GetConnectionDetails(instances[idx])
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
 
-		fmt.Printf("%s\n", details)
-	}
+	// 	fmt.Printf("%s\n", details)
+	// }
 }

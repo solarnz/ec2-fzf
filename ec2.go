@@ -2,15 +2,17 @@ package ec2fzf
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-func (e *Ec2fzf) ListInstances(ec2Client *ec2.EC2) ([]*ec2.Instance, error) {
+func (e *Ec2fzf) ListInstances(ctx context.Context, ec2Client *ec2.EC2) ([]*ec2.Instance, error) {
 	instances := make([]*ec2.Instance, 0)
 	filters := make([]*ec2.Filter, 0, 0)
 
@@ -36,7 +38,11 @@ func (e *Ec2fzf) ListInstances(ec2Client *ec2.EC2) ([]*ec2.Instance, error) {
 		params.Filters = filters
 	}
 
-	err := ec2Client.DescribeInstancesPages(
+	contextWithTimeout, cancelTimeout := context.WithTimeout(ctx, timeContext*time.Second)
+	defer cancelTimeout()
+
+	err := ec2Client.DescribeInstancesPagesWithContext(
+		contextWithTimeout,
 		params,
 		func(p *ec2.DescribeInstancesOutput, lastPage bool) bool {
 			for _, r := range p.Reservations {
@@ -52,7 +58,7 @@ func (e *Ec2fzf) ListInstances(ec2Client *ec2.EC2) ([]*ec2.Instance, error) {
 }
 
 func (e *Ec2fzf) GetConnectionDetails(instance *ec2.Instance) string {
-	if e.options.GetPrivateIp {
+	if e.options.GetPrivateIP {
 		return *instance.PrivateIpAddress
 	}
 	return *instance.PublicDnsName
