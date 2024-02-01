@@ -12,6 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
+//test
+
 func (e *Ec2fzf) ListInstances(ctx context.Context, ec2Client *ec2.EC2) ([]*ec2.Instance, error) {
 	instances := make([]*ec2.Instance, 0)
 	filters := make([]*ec2.Filter, 0, 0)
