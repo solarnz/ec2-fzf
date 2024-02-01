@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/solarnz/ec2-fzf"
+	ec2fzf "github.com/richie-tt/ec2-fzf"
 )
 
 func main() {
+
 	fzf, err := ec2fzf.New()
 	if err != nil {
 		fmt.Println(err)

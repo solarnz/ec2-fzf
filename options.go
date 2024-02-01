@@ -5,14 +5,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type Options struct {
-	Regions         []string
-	UsePrivateIp    bool
-	Template        string
-	PreviewTemplate string
-	Filters         []string
-}
-
+// ParseOptions function just parse paramters & configuration provided by user
 func ParseOptions() Options {
 	viper.SetConfigName("config")
 	viper.SetConfigType("toml")
@@ -25,17 +18,19 @@ func ParseOptions() Options {
 		}
 	}
 
-	pflag.StringSlice("region", []string{"us-east-1"}, "The AWS region")
-	pflag.Bool("use-private-ip", true, "Return the private ip of the instance selected")
+	pflag.StringSliceP("regions", "r", []string{"eu-central-1", "eu-west-2"}, "The AWS region. (eg. '-r eu-central-1,eu-west-1')")
+	pflag.BoolP("get-private-ip", "i", true, "Return the private ip of the instance selected")
 	pflag.StringSlice("filters", []string{}, "Filters to apply with the ec2 api call")
+	pflag.BoolP("version", "v", false, "Show version and exit")
 	pflag.Parse()
+
 	viper.BindPFlags(pflag.CommandLine)
 
-	viper.RegisterAlias("UsePrivateIp", "use-private-ip")
-	viper.RegisterAlias("regions", "region")
+	// viper.RegisterAlias("UsePrivateIp", "use-private-ip")
+	// viper.RegisterAlias("regions", "region")
 
-	viper.SetDefault("Region", "us-east-1")
-	viper.SetDefault("UsePrivateIp", false)
+	viper.SetDefault("Region", "eu-central-1")
+	viper.SetDefault("GetPrivateIP", false)
 	viper.SetDefault("Template", `{{ .InstanceId }}: {{index .Tags "Name"}}`)
 	viper.SetDefault("PreviewTemplate", `
 			Instance Id: {{.InstanceId}}
@@ -52,9 +47,10 @@ func ParseOptions() Options {
 
 	return Options{
 		Regions:         viper.GetStringSlice("Regions"),
-		UsePrivateIp:    viper.GetBool("UsePrivateIp"),
+		GetPrivateIP:    viper.GetBool("GetPrivateIP"),
 		Template:        viper.GetString("Template"),
 		PreviewTemplate: viper.GetString("PreviewTemplate"),
 		Filters:         viper.GetStringSlice("Filters"),
+		Version:         viper.GetBool("Version"),
 	}
 }
