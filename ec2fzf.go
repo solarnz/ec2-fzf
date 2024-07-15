@@ -20,6 +20,7 @@ type Ec2fzf struct {
 	options         Options
 	listTemplate    *template.Template
 	previewTemplate *template.Template
+	detailTemplate  *template.Template
 	ec2Sessions     []*session.Session
 }
 
@@ -49,10 +50,16 @@ func New() (*Ec2fzf, error) {
 		panic(err)
 	}
 
+	detailTemplate, err := template.New("Details").Funcs(sprig.TxtFuncMap()).Parse(options.DetailTemplate)
+	if err != nil {
+		panic(err)
+	}
+
 	return &Ec2fzf{
 		fzfInput:        new(bytes.Buffer),
 		options:         options,
 		listTemplate:    tmpl,
+		detailTemplate:  detailTemplate,
 		previewTemplate: previewTemplate,
 		ec2Sessions:     sessions,
 	}, nil
@@ -105,7 +112,7 @@ func (e *Ec2fzf) Run() {
 	}
 
 	for _, idx := range indexes {
-		details := e.GetConnectionDetails(instances[idx])
+		details, err := e.GetConnectionDetails(instances[idx])
 		if err != nil {
 			panic(err)
 		}

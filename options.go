@@ -10,6 +10,7 @@ type Options struct {
 	UsePrivateIp    bool
 	Template        string
 	PreviewTemplate string
+	DetailTemplate  string
 	Filters         []string
 }
 
@@ -49,12 +50,14 @@ func ParseOptions() Options {
 			{{- end -}}
 		`,
 	)
+	viper.SetDefault("DetailTemplate", `{{if .UsePrivateIp}}{{.PrivateIpAddress}}{{else}}{{.PublicDnsName}}{{end}}`)
 
 	return Options{
 		Regions:         viper.GetStringSlice("Regions"),
 		UsePrivateIp:    viper.GetBool("UsePrivateIp"),
 		Template:        viper.GetString("Template"),
 		PreviewTemplate: viper.GetString("PreviewTemplate"),
+		DetailTemplate:  viper.GetString("DetailTemplate"),
 		Filters:         viper.GetStringSlice("Filters"),
 	}
 }

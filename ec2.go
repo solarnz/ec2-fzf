@@ -51,11 +51,22 @@ func (e *Ec2fzf) ListInstances(ec2Client *ec2.EC2) ([]*ec2.Instance, error) {
 	return instances, err
 }
 
-func (e *Ec2fzf) GetConnectionDetails(instance *ec2.Instance) string {
-	if e.options.UsePrivateIp {
-		return *instance.PrivateIpAddress
+func (e *Ec2fzf) GetConnectionDetails(instance *ec2.Instance) (string, error) {
+	var buf bytes.Buffer
+	err := e.detailTemplate.Execute(
+		&buf,
+		struct {
+			*ec2.Instance
+			UsePrivateIp bool
+		}{
+			Instance:     instance,
+			UsePrivateIp: e.options.UsePrivateIp,
+		},
+	)
+	if err != nil {
+		return "", err
 	}
-	return *instance.PublicDnsName
+	return buf.String(), nil
 }
 
 func TemplateForInstance(i *ec2.Instance, t *template.Template) (output string, err error) {
